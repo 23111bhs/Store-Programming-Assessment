@@ -20,16 +20,33 @@ def list_available_items(available_items):
     if not available_items:
         print("\nThere are no items left.\n")
     else:
-        for item, price in available_items:
+        for item, price in available_items.items():
             print(item, price)
+        print()
 
 def list_items_in_budget(budget, available_items):
-    for items, price in available_items:
+    for items, price in available_items.items():
         if price <= budget:
-            print("\n--- Available items inside your specified budget: ---")
             print(items, price)
+    print()
+
+def buy_item(budget, available_items):
+
+    purchased_items = []
+
+    list_available_items(available_items)
+    chosen_item = input("Please enter the name of the item you would like to buy: ")
+    for item, price in available_items.items():
+        if item == chosen_item:
+            if budget >= price:
+                purchased_items.append(item)
+                del available_items[item]
+                budget -= price
+                print(f"Successfully bought {item}! Your total cart price is now: {budget:.2f}")
+            else:
+                print(f"You are unable to afford this item. The item costs: {price}, and your budget is: {budget:.2f}")
         else:
-            print("There are no items inside your budget.")
+            print("Please select an item in our stock.")
 
 def main():
     MINIMUM_BUDGET = 0
@@ -78,14 +95,31 @@ def main():
             if user_input == 1:
                 display_user_budget(user_budget)
             elif user_input == 2:
-                list_available_items(list_available_items)
+                if not available_items:
+                    print("\nThere are no items left in stock.")
+                else:
+                    list_available_items(available_items)
             elif user_input == 3:
+                if not available_items:
+                    print("\nThere are no items left in stock.")
                 list_items_in_budget(user_budget, available_items)
+
+            elif user_input == 4:
+                if not available_items:
+                    print("\nThere are no items left in stock.")
+                else:
+                    buy_item(user_budget, available_items)
+            
+
+
+
+            elif user_input == 6:
+                break
         
         except KeyboardInterrupt:
             print("\nThank you for using this program.")
             break
-        except:
-            print("\nAn unexpected error has occurred. Please contact your local system administrator.")
-            break
+        # except:
+        #     print("\nAn unexpected error has occurred. Please contact your local system administrator.")
+        #     break
 main()
