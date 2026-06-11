@@ -3,6 +3,8 @@ Store Program by Jack Aker
 This program has the sole purpose of providing a means of checking stock of items in a store and purchasing items for the consumer.
 """
 
+import sys
+
 def display_options():
     print("\n---- Store Program ----")
     print("1: View your budget")
@@ -25,31 +27,52 @@ def list_available_items(available_items):
         print()
 
 def list_items_in_budget(budget, available_items):
+    print()
     for items, price in available_items.items():
         if price <= budget:
             print(items, price)
     print()
 
-def buy_item(budget, available_items):
+def list_items_already_bought(purchased_items):
+    print("\nHere is your current recipt.")
+    for item, price in purchased_items.items():
+        print(f"- {item}, ${price:.2f}")
+    print()
 
-    purchased_items = []
+def buy_item(budget, available_items, purchased_items, current_total_price):
+    try:
+        current_total_price = 0.00
+        list_available_items(available_items)
+        chosen_item = input("Please enter the name of the item you would like to buy: ")
+        chosen_item_cleaned = ''.join(char for char in chosen_item if char.isalnum() or char.isspace()).strip()
 
-    list_available_items(available_items)
-    chosen_item = input("Please enter the name of the item you would like to buy: ")
-    for item, price in available_items.items():
-        if item == chosen_item:
+        matched_key = None
+        for item_name in available_items:
+            if item_name.lower() == chosen_item_cleaned.lower():
+                matched_key = item_name
+
+        if matched_key:
+            price = available_items[matched_key]
             if budget >= price:
-                purchased_items.append(item)
-                del available_items[item]
+                purchased_items[matched_key] = price
+                del available_items[matched_key]
                 budget -= price
-                print(f"Successfully bought {item}! Your total cart price is now: {budget:.2f}")
+                current_total_price += price
+                print(f"\nSuccessfully bought {matched_key}! Your total cart price is now: ${current_total_price:.2f} and your budget remaining is ${budget:.2f}\n")
             else:
-                print(f"You are unable to afford this item. The item costs: {price}, and your budget is: {budget:.2f}")
+                print(f"\nYou are unable to afford this item. The item costs: ${price:.2f}, and your budget is: ${budget:.2f}\n")
         else:
-            print("Please select an item in our stock.")
+            print("\nPlease select an item in our stock.\n")
+        return budget, purchased_items, current_total_price
+    except ValueError:
+        print("\nPlease enter the full name of the item.\n")
+    except KeyboardInterrupt:
+        print("\nThank you for using this program. Exiting now...")
+        sys.exit()
 
 def main():
     MINIMUM_BUDGET = 0
+    current_total_price = 0.00
 
     available_items = {
         "Mouse": 25.00,
@@ -73,18 +96,20 @@ def main():
         "Power Board": 28.00,
         "USB Adapter": 14.99
     }
+
+    purchased_items = {}
     
     while True:
         try:
             user_budget = float(input("Welcome to Jmart. Please enter your budget (NZD): $"))
             if user_budget <= MINIMUM_BUDGET:
-                print("Please enter a valid budget.")
+                print("\nPlease enter a valid budget.\n")
             else:
                 display_options()
                 break
         except KeyboardInterrupt:
-            print("\nThank you for using this program.")
-            break
+            print("\nThank you for using this program. Exiting now...")
+            sys.exit()
         except:
             print("\nAn unexpected error has occurred. Please contact your local system administrator.")
             break
@@ -108,17 +133,19 @@ def main():
                 if not available_items:
                     print("\nThere are no items left in stock.")
                 else:
-                    buy_item(user_budget, available_items)
-            
-
-
+                    user_budget, purchased_items, current_total_price = buy_item(user_budget, available_items, purchased_items, current_total_price)
+            elif user_input == 5:
+                if not purchased_items:
+                    print("You haven't purchased anything.")
+                else:
+                    list_items_already_bought(purchased_items)
 
             elif user_input == 6:
                 break
         
         except KeyboardInterrupt:
-            print("\nThank you for using this program.")
-            break
+            print("\nThank you for using this program. Exiting now...")
+            sys.exit()
         # except:
         #     print("\nAn unexpected error has occurred. Please contact your local system administrator.")
         #     break
