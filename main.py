@@ -3,8 +3,10 @@ Store Program by Jack Aker
 This program has the sole purpose of providing a means of checking stock of items in a store and purchasing items for the consumer.
 """
 
+# import sys package so that i can use 'sys.exit()' to exit the program easily.
 import sys
 
+# define the options that the user will need to choose for the program. when this function is called, the options will be printed in the terminal for the user to see.
 def display_options():
     print("\n---- Store Program ----")
     print("1: View your budget")
@@ -12,69 +14,117 @@ def display_options():
     print("3: List all items in your budget")
     print("4: Buy item")
     print("5: List purchased items")
-    print("6: Exit\n")
+    print("6: Show currrent cart total")
+    print("7: Display this menu again")
+    print("8: Exit the program\n")
 
-
+# display the user's remaining budget for their shopping session. when this function is called, it takes one value (budget) and displays it in float form (:.2f) for the user.
 def display_user_budget(budget):
-    print(f"\nYour budget is: ${budget:.2f}\n")
+    print(f"\nYour remaining budget is: ${budget:.2f}\n")
 
+# this function takes one value upon beign called and converts it to float form (:.2f) for the user.
+def show_current_cart_total(current_total_price):
+    print(f"The current total of all your items is: ${current_total_price:.2f}")
+
+# this function has the use of displaying the currently in-stock items inside of the available_items dictionary.
 def list_available_items(available_items):
+    # if there are no items inside of the dictionary, display 'There are no items left.' in the terminal for the user.
     if not available_items:
         print("\nThere are no items left.\n")
+    
+    # if the dictionary has items inside of it, loop through the items with the item name and item price and display it for the user. 
     else:
         for item, price in available_items.items():
-            print(item, price)
+            print(f"- {item}, ${price}")
         print()
 
+# this function has the use of showing the items that fit inside of the user's budget and displays it for the user.
 def list_items_in_budget(budget, available_items):
+    # display extra line before loop to make the program's output easier to read for the user.
     print()
+    
+    # use booling T/F value to check if the user cannot afford anything in the dictionary, if they can, the program displays the items they can purchase.
+    cant_afford_anything = False
     for items, price in available_items.items():
         if price <= budget:
             print(items, price)
+        else:
+            cant_afford_anything = True
+    if cant_afford_anything == True:
+        print("You cannot afford anything in stock.")
+    
+    # display another line after loop to make the program's output easier to read for the user.    
     print()
 
+# this function has the use of showing the items that the user has already bought and then displaying them for the user.
 def list_items_already_bought(purchased_items):
+    # loop through the items in purchased_items and seperate the key/values so that when an item is in the dictionary, it will print the item and price in float form (:.2f)
     print("\nHere is your current recipt.")
     for item, price in purchased_items.items():
         print(f"- {item}, ${price:.2f}")
+    
+    # display extra line after loop to make the program's output easier to read for the user.
     print()
 
+# this function has the use of allowing the user to buy an item in an interactive way while returning values to user.
 def buy_item(budget, available_items, purchased_items, current_total_price):
     try:
-        current_total_price = 0.00
+        # display available items to the user once the function is called.
         list_available_items(available_items)
+        
+        # define user input section where the user can input the item that they would like to purchase.
         chosen_item = input("Please enter the name of the item you would like to buy: ")
+
+        # clean the user's input by using a for-loop that iterates through all the characters in the input and stripping anything except what the program needs.
         chosen_item_cleaned = ''.join(char for char in chosen_item if char.isalnum() or char.isspace()).strip()
 
         matched_key = None
+
+        # loop through available_items' keys until the user's input has been matched. if it matches, set 'matched_key' to that key. if not, catch error below and print 'please select an item in our stock.'
         for item_name in available_items:
             if item_name.lower() == chosen_item_cleaned.lower():
                 matched_key = item_name
+                break # we use a break so that once the item is found, the for loop ends for efficiency.
 
+        # if the key exists, set 'price' to the value of matched_key.
         if matched_key:
             price = available_items[matched_key]
+    
+        # if matched_key and item_name are the EXACT same, check if the user can afford the item and if they can, add the item to the purchased_items dict,
+        # then remove the item from available_items, subtract the price from the budget, and add the price of the item to the 'current_total_price' variable.
+        if item_name == matched_key:
             if budget >= price:
                 purchased_items[matched_key] = price
                 del available_items[matched_key]
                 budget -= price
                 current_total_price += price
-                print(f"\nSuccessfully bought {matched_key}! Your total cart price is now: ${current_total_price:.2f} and your budget remaining is ${budget:.2f}\n")
+                print(f"\nSuccessfully bought {matched_key}! Your total cart price is now: ${current_total_price:.2f} and your remaining budget is ${budget:.2f}\n")
+            
+            # if the user cannot afford their selected item, inform them of the cost and the budget.
             else:
                 print(f"\nYou are unable to afford this item. The item costs: ${price:.2f}, and your budget is: ${budget:.2f}\n")
+        # if the item chosen does not exist inside of available_items, inform the user of their mistake.
         else:
             print("\nPlease select an item in our stock.\n")
+        
+        # only return the budget if a valid item is chosen, the user can afford it, and no other errors have been thrown.
         return budget, purchased_items, current_total_price
     except ValueError:
         print("\nPlease enter the full name of the item.\n")
     except KeyboardInterrupt:
         print("\nThank you for using this program. Exiting now...")
         sys.exit()
+    except:
+        print("\nAn unexpected error has occurred. Please contact your local system administrator.")
+        sys.exit()
 
+
+# define main function which calls other functions and stores main values alongside the item stock.
 def main():
-    MINIMUM_BUDGET = 0
-    current_total_price = 0.00
+    MINIMUM_BUDGET = 0 # define a static value designed NOT to be changed unless need. this value sets the minimum budget needed for a user
+    current_total_price = 0.00 # define a variable which stores the current total cart price.
 
-    available_items = {
+    available_items = { # define a dictionary which stores all in-stock items at the time
         "Mouse": 25.00,
         "Keyboard": 35.75,
         "Headphones": 39.99,
@@ -97,56 +147,102 @@ def main():
         "USB Adapter": 14.99
     }
 
-    purchased_items = {}
+    purchased_items = {} # define dictionary which will store the purchased items that the user chooses.
     
+    # loop through the budget part of the program until the user inputs their allowed budget (0.01 - inf).
     while True:
+        # use a 'try catch' to not throw an error in the terminal when unexpected input is entered.
         try:
             user_budget = float(input("Welcome to Jmart. Please enter your budget (NZD): $"))
             if user_budget <= MINIMUM_BUDGET:
                 print("\nPlease enter a valid budget.\n")
+
             else:
                 display_options()
                 break
+
+        # if the user force quits the program (ctrl + c or ctrl + a, ctrl + c) the program will gracefully quit instead of throwing an error in the terminal.
         except KeyboardInterrupt:
             print("\nThank you for using this program. Exiting now...")
             sys.exit()
+
+        # if a user enters anything other than a float or integer, the program will output 'Please enter a numeric value (1, 10.00, 50).'
+        except ValueError:
+            print("\nPlease enter a numeric value (1, 10.00, 50).\n")
+
+        # in the event that something unimagineable happens, catch any other errors and gracefully quit the program
         except:
             print("\nAn unexpected error has occurred. Please contact your local system administrator.")
-            break
+            sys.exit()
     
+    # loop through the option selection part of the program (1-7)
     while True:
         try:
-            user_input = int(input("Please enter the option you would like to choose: "))
+            user_input = int(input("Please enter the option you would like to choose (or enter '7' to display options again): "))
+            # if the user selects option 1 then call the 'display_user_budget' function to display their budget
             if user_input == 1:
                 display_user_budget(user_budget)
+
+            # calls function to list items that the user can purchase. if there are none, output 'There are no items left in stock.
             elif user_input == 2:
                 if not available_items:
                     print("\nThere are no items left in stock.")
                 else:
                     list_available_items(available_items)
+
+            # if the user inputs 3, then call function which lists all items inside of their budget.
             elif user_input == 3:
                 if not available_items:
-                    print("\nThere are no items left in stock.")
+                    print("\nThere are no items left in stock.\n")
                 list_items_in_budget(user_budget, available_items)
 
+            # if the user inputs 4, then call function which allows a user to buy an item and return values to main function.
             elif user_input == 4:
                 if not available_items:
-                    print("\nThere are no items left in stock.")
+                    print("\nThere are no items left in stock.\n")
                 else:
                     user_budget, purchased_items, current_total_price = buy_item(user_budget, available_items, purchased_items, current_total_price)
+                    list_items_already_bought(purchased_items)
+
+            # if the user inputs 5, check if the user has bought any items and if they have, display them.
             elif user_input == 5:
                 if not purchased_items:
-                    print("You haven't purchased anything.")
+                    print("\nYou haven't purchased anything.\n")
                 else:
                     list_items_already_bought(purchased_items)
 
+            # if the user inputs 6, output their current cart total.
             elif user_input == 6:
+                show_current_cart_total(current_total_price)
+
+            # if the user inputs 7, display the numbered options again in the terminal.
+            elif user_input == 7:
+                display_options()
+            
+            # if the user inputs 8, break out of this while True loop and show their recipt.
+            elif user_input == 8:
                 break
-        
+
         except KeyboardInterrupt:
-            print("\nThank you for using this program. Exiting now...")
+            print()
+            print("\nThank you for using this program. Exiting now...\n")
             sys.exit()
-        # except:
-        #     print("\nAn unexpected error has occurred. Please contact your local system administrator.")
-        #     break
+
+        except ValueError:
+            print("\nPlease select an option in numeric form.\n")
+        except:
+
+            print("\nAn unexpected error has occurred. Please contact your local system administrator.")
+            break
+    try:
+
+        if not purchased_items:
+            print("\nYou have not purchased anything.\n")
+        else: 
+            list_items_already_bought(purchased_items)
+        print("\nThank you for shopping at Jmart!")
+
+    except:
+        print("\nAn unexpected error has occurred. Please contact your local system administrator.")
+
 main()
