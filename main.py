@@ -246,7 +246,6 @@ def main():
             print("\nAn unexpected error has occurred. Please contact your local system administrator.")
             break
     
-    # 
     try:
         if not purchased_items:
             print("\nYou have not purchased anything.\n")
