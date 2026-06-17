@@ -68,57 +68,62 @@ def list_items_already_bought(purchased_items):
 
 # this function has the use of allowing the user to buy an item in an interactive way while returning values to user.
 def buy_item(budget, available_items, purchased_items, current_total_price):
-    try:
-        # display available items to the user once the function is called.
-        list_available_items(available_items)
+
+    # display available items to the user once the function is called.
+    list_available_items(available_items)
+
+    # loop through the item buying process until the user enters a valid item name
+    while True:
+        try:
+            # define user input section where the user can input the item that they would like to purchase.
+            chosen_item = input("Please enter the name of the item you would like to buy: ")
+
+            # clean the user's input by using a for-loop that iterates through all the characters in the input and stripping anything except what the program needs.
+            chosen_item_cleaned = ''.join(char for char in chosen_item if char.isalnum() or char.isspace()).strip()
+
+            matched_key = None
+
+            # loop through available_items' keys until the user's input has been matched. if it matches, set 'matched_key' to that key. if not, catch error below and print 'please select an item in our stock.'
+            for item_name in available_items: 
+                if item_name.lower() == chosen_item_cleaned.lower(): # match the item name with the cleaned user input in lower form.
+                    matched_key = item_name # set matched_key as the item name if the user's inputted item and the current item in the loop match.
+                    break # we use a break so that once the item is found, the for loop ends for efficiency.
+
+            # if the key exists, set 'price' to the value of matched_key.
+            if matched_key:
+                price = available_items[matched_key]
         
-        # define user input section where the user can input the item that they would like to purchase.
-        chosen_item = input("Please enter the name of the item you would like to buy: ")
+            # check if the user can afford the item and if they can, add the item to the purchased_items dict,
+            # then remove the item from available_items, subtract the price from the budget, and add the price of the item to the 'current_total_price' variable.
+                if budget >= price:
+                    purchased_items[matched_key] = price
+                    del available_items[matched_key]
+                    budget -= price
+                    current_total_price += price
+                    print(f"\nSuccessfully bought {matched_key}! Your total cart price is now: ${current_total_price:.2f} and your remaining budget is ${budget:.2f}\n")
+                    
+                    # only return the budget if a valid item is chosen, the user can afford it, and no other errors have been thrown.
+                    return budget, purchased_items, current_total_price
 
-        # clean the user's input by using a for-loop that iterates through all the characters in the input and stripping anything except what the program needs.
-        chosen_item_cleaned = ''.join(char for char in chosen_item if char.isalnum() or char.isspace()).strip()
+                # if the user cannot afford their selected item, inform them of the cost and the budget.
+                else:
+                    print(f"\nYou are unable to afford this item. The item costs: ${price:.2f}, and your budget is: ${budget:.2f}\n")
+                    return budget, purchased_items, current_total_price # if the user cannot afford any items, return them to the options menu.
 
-        matched_key = None
-
-        # loop through available_items' keys until the user's input has been matched. if it matches, set 'matched_key' to that key. if not, catch error below and print 'please select an item in our stock.'
-        for item_name in available_items: 
-            if item_name.lower() == chosen_item_cleaned.lower(): # match the item name with the cleaned user input in lower form.
-                matched_key = item_name # set matched_key as the item name if the user's inputted item and the current item in the loop match.
-                break # we use a break so that once the item is found, the for loop ends for efficiency.
-
-        # if the key exists, set 'price' to the value of matched_key.
-        if matched_key:
-            price = available_items[matched_key]
-    
-        # check if the user can afford the item and if they can, add the item to the purchased_items dict,
-        # then remove the item from available_items, subtract the price from the budget, and add the price of the item to the 'current_total_price' variable.
-            if budget >= price:
-                purchased_items[matched_key] = price
-                del available_items[matched_key]
-                budget -= price
-                current_total_price += price
-                print(f"\nSuccessfully bought {matched_key}! Your total cart price is now: ${current_total_price:.2f} and your remaining budget is ${budget:.2f}\n")
-            
-            # if the user cannot afford their selected item, inform them of the cost and the budget.
+            # if the item chosen does not exist inside of available_items, inform the user of their mistake.
             else:
-                print(f"\nYou are unable to afford this item. The item costs: ${price:.2f}, and your budget is: ${budget:.2f}\n")
-        # if the item chosen does not exist inside of available_items, inform the user of their mistake.
-        else:
-            print("\nPlease select an item in our stock.\n")
-        
-        # only return the budget if a valid item is chosen, the user can afford it, and no other errors have been thrown.
-        return budget, purchased_items, current_total_price
+                print("\nPlease select an item in our stock.\n")
 
-    except ValueError:
-        print("\nPlease enter the full name of the item.\n")
+        except ValueError:
+            print("\nPlease enter the full name of the item.\n")
 
-    except KeyboardInterrupt:
-        print("\nThank you for using this program. Exiting now...")
-        sys.exit()
+        except KeyboardInterrupt:
+            print("\nThank you for using this program. Exiting now...")
+            sys.exit()
 
-    except:
-        print("\nAn unexpected error has occurred. Please contact your local system administrator.")
-        sys.exit()
+        except:
+            print("\nAn unexpected error has occurred. Please contact your local system administrator.")
+            sys.exit()
 
 
 # define main function which calls other functions and stores main values alongside the item stock.
