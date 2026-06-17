@@ -1,5 +1,5 @@
 """
-Store Program by Jack Aker
+Store Program by Jack Aker | started Jun 9th ending Jun 25th.
 This program has the sole purpose of providing a means of checking stock of items in a store and purchasing items for the consumer.
 """
 
@@ -108,11 +108,14 @@ def buy_item(budget, available_items, purchased_items, current_total_price):
         
         # only return the budget if a valid item is chosen, the user can afford it, and no other errors have been thrown.
         return budget, purchased_items, current_total_price
+
     except ValueError:
         print("\nPlease enter the full name of the item.\n")
+
     except KeyboardInterrupt:
         print("\nThank you for using this program. Exiting now...")
         sys.exit()
+
     except:
         print("\nAn unexpected error has occurred. Please contact your local system administrator.")
         sys.exit()
@@ -231,6 +234,9 @@ def main():
             # if the user inputs 8, break out of this while True loop and show their recipt.
             elif user_input == EXIT_PROGRAM_OPTION:
                 break
+
+            else:
+                print("\nPlease select a valid option.\n")
 
         # if the user tries to force exit the program, exit gracefully and dipslay a 'goodbye' message.
         except KeyboardInterrupt:
