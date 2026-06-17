@@ -210,7 +210,8 @@ def main():
                     print("\nThere are no items left in stock.\n")
                 else:
                     user_budget, purchased_items, current_total_price = buy_item(user_budget, available_items, purchased_items, current_total_price)
-                    list_items_already_bought(purchased_items)
+                    if purchased_items:
+                        list_items_already_bought(purchased_items)
 
             # if the user inputs 5, check if the user has bought any items and if they have, display them.
             elif user_input == BOUGHT_ITEMS_OPTION:
