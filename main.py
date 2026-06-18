@@ -22,7 +22,7 @@ def display_options(budget,avail_items,items_budget,buy_item,bought_item,cart_to
 def display_user_budget(budget):
     print(f"\nYour remaining budget is: ${budget:.2f}\n")
 
-# this function takes one value upon beign called and converts it to float form (:.2f) for the user.
+# this function takes one value upon being called and converts it to float form (:.2f) for the user.
 def show_current_cart_total(current_total_price):
     print(f"\nThe current total of all your items is: ${current_total_price:.2f}\n")
 
