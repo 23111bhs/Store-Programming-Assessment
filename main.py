@@ -24,7 +24,12 @@ def display_user_budget(budget):
 
 # this function takes one value upon being called and converts it to float form (:.2f) for the user.
 def show_current_cart_total(current_total_price):
-    print(f"\nThe current total of all your items is: ${current_total_price:.2f}\n")
+    # if the current total price of the user's cart exists (is over 0.01), then display the below text.
+    if current_total_price:
+        print(f"\nThe current total of all your items is: ${current_total_price:.2f}\n")
+    # if the current total price of the user's cart does NOT exist, display the message below informing them to purchase an item first.
+    else:
+        print(f"\nYou haven't purchased anything. Please purchase an item to check your cart total.\n")
 
 # this function has the use of displaying the currently in-stock items inside of the available_items dictionary.
 def list_available_items(available_items):
