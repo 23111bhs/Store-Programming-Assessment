@@ -1,5 +1,5 @@
 """
-Store Program by Jack Aker | started Jun 9th ending Jun 25th.
+Store Program by Jack Aker | started Jun 9th ending Jun 19th.
 This program has the sole purpose of providing a means of checking stock of items in a store and purchasing items for the consumer.
 """
 
