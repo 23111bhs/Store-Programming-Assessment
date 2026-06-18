@@ -69,6 +69,16 @@ def list_items_already_bought(purchased_items):
 # this function has the use of allowing the user to buy an item in an interactive way while returning values to user.
 def buy_item(budget, available_items, purchased_items, current_total_price):
 
+    try:
+        cheapest_item_available = min(available_items.values()) # sort through the values of available_items and find the lowest value.
+        if budget < cheapest_item_available: # if the user's budget is less than the cheapest item, print the below text and end the function.
+            print(f"\nYou cannot afford any items in stock. The cheapest item costs: ${cheapest_item_available:.2f}, and you have {budget:.2f}\n")
+            return budget, purchased_items, current_total_price # if the user cannot afford any items, return them to the options menu.
+    
+    except:
+        print("\nAn unexpected error has occurred. Please contact your local system administrator.")
+        sys.exit() # gracefully quit program upon unexpected error
+
     # display available items to the user once the function is called.
     list_available_items(available_items)
 
@@ -108,7 +118,6 @@ def buy_item(budget, available_items, purchased_items, current_total_price):
                 # if the user cannot afford their selected item, inform them of the cost and the budget.
                 else:
                     print(f"\nYou are unable to afford this item. The item costs: ${price:.2f}, and your budget is: ${budget:.2f}\n")
-                    return budget, purchased_items, current_total_price # if the user cannot afford any items, return them to the options menu.
 
             # if the item chosen does not exist inside of available_items, inform the user of their mistake.
             else:
