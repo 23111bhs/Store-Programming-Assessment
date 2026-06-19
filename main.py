@@ -91,7 +91,11 @@ def buy_item(budget, available_items, purchased_items, current_total_price):
     while True:
         try:
             # define user input section where the user can input the item that they would like to purchase.
-            chosen_item = input("Please enter the name of the item you would like to buy: ")
+            chosen_item = input("Please enter the name of the item you would like to buy (or enter 'exit' to exit): ")
+
+            if chosen_item == "exit":
+                print()
+                return budget, purchased_items, current_total_price
 
             # clean the user's input by using a for-loop that iterates through all the characters in the input and stripping anything except what the program needs.
             chosen_item_cleaned = ''.join(char for char in chosen_item if char.isalnum() or char.isspace()).strip()
@@ -110,20 +114,26 @@ def buy_item(budget, available_items, purchased_items, current_total_price):
         
             # check if the user can afford the item and if they can, add the item to the purchased_items dict,
             # then remove the item from available_items, subtract the price from the budget, and add the price of the item to the 'current_total_price' variable.
-                if budget >= price:
-                    purchased_items[matched_key] = price
-                    del available_items[matched_key]
-                    budget -= price
-                    current_total_price += price
-                    print(f"\nSuccessfully bought {matched_key}! Your total cart price is now: ${current_total_price:.2f} and your remaining budget is ${budget:.2f}\n")
-                    
-                    # only return the budget if a valid item is chosen, the user can afford it, and no other errors have been thrown.
-                    return budget, purchased_items, current_total_price
+                print()
+                user_confirmation = input(f"The {matched_key} costs ${price:.2f}. Would you like to continue? (Y/N): ").lower().strip()
 
-                # if the user cannot afford their selected item, inform them of the cost and the budget.
+                if user_confirmation == "y":
+                    if budget >= price:
+                        purchased_items[matched_key] = price
+                        del available_items[matched_key]
+                        budget -= price
+                        current_total_price += price
+                        print(f"\nSuccessfully bought {matched_key}! Your total cart price is now: ${current_total_price:.2f} and your remaining budget is ${budget:.2f}\n")
+                        
+                        # only return the budget if a valid item is chosen, the user can afford it, and no other errors have been thrown.
+                        return budget, purchased_items, current_total_price
+
+                    # if the user cannot afford their selected item, inform them of the cost and the budget.
+                    else:
+                        print(f"\nYou are unable to afford this item. The item costs: ${price:.2f}, and your budget is: ${budget:.2f}\n")
+
                 else:
-                    print(f"\nYou are unable to afford this item. The item costs: ${price:.2f}, and your budget is: ${budget:.2f}\n")
-
+                    print(f"\n{matched_key} not bought.\n")
             # if the item chosen does not exist inside of available_items, inform the user of their mistake.
             else:
                 print("\nPlease select an item in our stock.\n")
