@@ -101,7 +101,7 @@ def buy_item(budget, available_items, purchased_items, current_total_price):
             chosen_item_cleaned = ''.join(char for char in chosen_item if char.isalnum() or char.isspace()).strip()
 
             matched_key = None
-            checked_item = 0
+            confirmed_item = 0
 
             # loop through available_items' keys until the user's input has been matched. if it matches, set 'matched_key' to that key. if not, catch error below and print 'please select an item in our stock.'
             for item_name in available_items: 
@@ -120,18 +120,18 @@ def buy_item(budget, available_items, purchased_items, current_total_price):
                     user_confirmation = input(f"The {matched_key} costs ${price:.2f}. Would you like to continue? (Y/N): ").lower().strip()
 
                     if user_confirmation == "y":
-                        checked_item = 1 # set variable to '1' for the first case (yes) and break out of the while loop so that the selected item can be purchased.
+                        confirmed_item = 1 # set variable to '1' for the first case (yes) and break out of the while loop so that the selected item can be purchased.
                         break
 
                     elif user_confirmation == "n":
                         print(f"\n{matched_key} not bought.\n")
-                        checked_item = 2 # set variable to '2' for the second case (no) so that further down on line 147 i can use it to 'pass' instead of hitting the else on ln 149.
+                        confirmed_item = 2 # set variable to '2' for the second case (no) so that further down on line 147 i can use it to 'pass' instead of hitting the else on ln 149.
                         break
 
                     else: # if the user_confirmation is anything other than 'y' or 'n' then display the message below.
                         print(f"\nPlease enter 'Y'(es) or 'N'(o).\n")
 
-                if budget >= price and checked_item == 1:
+                if budget >= price and confirmed_item == 1:
                     purchased_items[matched_key] = price
                     del available_items[matched_key]
                     budget -= price
@@ -143,7 +143,7 @@ def buy_item(budget, available_items, purchased_items, current_total_price):
 
                 # if the user cannot afford their selected item, inform them of the cost and the budget.
 
-                elif checked_item == 2:
+                elif confirmed_item == 2:
                     continue
 
                 else:
@@ -281,6 +281,7 @@ def main():
             elif user_input == EXIT_PROGRAM_OPTION:
                 break
 
+            # if the user inputs something that is 'invalid', (110, abc, 9.9, True) then display the below text in the terminal.
             else:
                 print("\nPlease select a valid option.\n")
 
