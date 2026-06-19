@@ -101,6 +101,7 @@ def buy_item(budget, available_items, purchased_items, current_total_price):
             chosen_item_cleaned = ''.join(char for char in chosen_item if char.isalnum() or char.isspace()).strip()
 
             matched_key = None
+            checked_item = 0
 
             # loop through available_items' keys until the user's input has been matched. if it matches, set 'matched_key' to that key. if not, catch error below and print 'please select an item in our stock.'
             for item_name in available_items: 
@@ -115,25 +116,39 @@ def buy_item(budget, available_items, purchased_items, current_total_price):
             # check if the user can afford the item and if they can, add the item to the purchased_items dict,
             # then remove the item from available_items, subtract the price from the budget, and add the price of the item to the 'current_total_price' variable.
                 print()
-                user_confirmation = input(f"The {matched_key} costs ${price:.2f}. Would you like to continue? (Y/N): ").lower().strip()
+                while True:
+                    user_confirmation = input(f"The {matched_key} costs ${price:.2f}. Would you like to continue? (Y/N): ").lower().strip()
 
-                if user_confirmation == "y":
-                    if budget >= price:
-                        purchased_items[matched_key] = price
-                        del available_items[matched_key]
-                        budget -= price
-                        current_total_price += price
-                        print(f"\nSuccessfully bought {matched_key}! Your total cart price is now: ${current_total_price:.2f} and your remaining budget is ${budget:.2f}\n")
-                        
-                        # only return the budget if a valid item is chosen, the user can afford it, and no other errors have been thrown.
-                        return budget, purchased_items, current_total_price
+                    if user_confirmation == "y":
+                        checked_item = 1 # set variable to '1' for the first case (yes) and break out of the while loop so that the selected item can be purchased.
+                        break
 
-                    # if the user cannot afford their selected item, inform them of the cost and the budget.
-                    else:
-                        print(f"\nYou are unable to afford this item. The item costs: ${price:.2f}, and your budget is: ${budget:.2f}\n")
+                    elif user_confirmation == "n":
+                        print(f"\n{matched_key} not bought.\n")
+                        checked_item = 2 # set variable to '2' for the second case (no) so that further down on line 147 i can use it to 'pass' instead of hitting the else on ln 149.
+                        break
+
+                    else: # if the user_confirmation is anything other than 'y' or 'n' then display the message below.
+                        print(f"\nPlease enter 'Y'(es) or 'N'(o).\n")
+
+                if budget >= price and checked_item == 1:
+                    purchased_items[matched_key] = price
+                    del available_items[matched_key]
+                    budget -= price
+                    current_total_price += price
+                    print(f"\nSuccessfully bought {matched_key}! Your total cart price is now: ${current_total_price:.2f} and your remaining budget is ${budget:.2f}\n")
+                    
+                    # only return the budget if a valid item is chosen, the user can afford it, and no other errors have been thrown.
+                    return budget, purchased_items, current_total_price
+
+                # if the user cannot afford their selected item, inform them of the cost and the budget.
+
+                elif checked_item == 2:
+                    continue
 
                 else:
-                    print(f"\n{matched_key} not bought.\n")
+                    print(f"\nYou are unable to afford this item. The item costs: ${price:.2f}, and your budget is: ${budget:.2f}\n")
+
             # if the item chosen does not exist inside of available_items, inform the user of their mistake.
             else:
                 print("\nPlease select an item in our stock.\n")
