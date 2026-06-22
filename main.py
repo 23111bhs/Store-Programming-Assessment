@@ -1,5 +1,5 @@
 """
-Store Program by Jack Aker | started Jun 9th ending Jun 19th.
+Store Program by Jack Aker | started Jun 9th ending Jun 22nd.
 This program has the sole purpose of providing a means of checking stock of items in a store and purchasing items for the consumer.
 """
 
@@ -141,8 +141,6 @@ def buy_item(budget, available_items, purchased_items, current_total_price):
                     # only return the budget if a valid item is chosen, the user can afford it, and no other errors have been thrown.
                     return budget, purchased_items, current_total_price
 
-                # if the user cannot afford their selected item, inform them of the cost and the budget.
-
                 elif confirmed_item == 2:
                     continue
 
@@ -168,7 +166,7 @@ def buy_item(budget, available_items, purchased_items, current_total_price):
 # define main function which calls other functions and stores main values alongside the item stock.
 def main():
     # constant values for the display menu to use instead of hard-coding the values that will be used/displayed on launch.
-    MINIMUM_BUDGET = 0 # define a static value designed NOT to be changed unless need. this value sets the minimum budget needed for a user
+    MINIMUM_BUDGET = 0
     SHOW_BUDGET_OPTION = 1
     AVAILABLE_ITEMS_OPTION = 2
     ITEMS_IN_BUDGET_OPTION = 3
@@ -176,9 +174,8 @@ def main():
     BOUGHT_ITEMS_OPTION = 5
     CART_TOTAL_OPTION = 6
     SHOW_HELP_MENU_OPTION = 7
-    EXIT_PROGRAM_OPTION = 8 # static value for the exit option which allows the user to exit the program.
+    EXIT_PROGRAM_OPTION = 8
 
-    # float variable to store the total price of all the user's items.
     current_total_price = 0.00 # define a variable which stores the current total cart price.
 
     available_items = { # define a dictionary which stores all in-stock items at the time
